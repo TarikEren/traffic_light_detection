@@ -73,29 +73,117 @@ Programın tanımada kullanabildiği dosya uzantıları:
 - Python 3
 - Nvidia GPU ve CUDA sürücüleri (Daha hızlı tanıma yapmak için gerekli)
 
-## Kullanım
+## Kurulum
 
-0) Programı yüklemek için repo aşağıdaki komut ile klonlanmalıdır:
+0) Program öncelikle aşağıdaki komut ile klonlanmalıdır:
     ```
-    git clone 
+    git clone https://github.com/TarikEren/traffic_light_detection.git
     ```
 
-1) Öncelikle programın olduğu dizinde bir terminal / komut istemi açılmalı veya
-
+1) Programın olduğu dizinde bir terminal / komut istemi açılmalı veya
     ```
     cd "Proje dizini"
     ```
     komutuyla projenin dizinine geçilmelidir.
 
 2) Gerekli kütüphaneleri yüklemek için
-
     ```
     pip install -r requirements.txt
     ```
     komutu çalıştırılmalıdır.
 
-3) Son olarak programı çalıştırmak için
-    ```
-    python.exe ./detect.py "Hedef dosya veya dizin adı"
-    ```
-    komutu çalıştırılmalıdır.
+## Kullanım
+Program kurulumu bitirildikten sonra tanıma veya eğitim amaçlı olarak kullanılabilir.
+
+
+### Eğitim
+```
+python.exe ./train.py [parametreler]
+```
+
+| Parametre  | Açıklama                                                                                | Varsayılan Değer         |
+|------------|-----------------------------------------------------------------------------------------|--------------------------|
+| --yaml     | YOLO model eğitimi için kullanılacak olan .yaml dosyasının bağıl konumu                 | ./data.yaml              |
+| --dataset  | YOLO formatında olan veri setinin bağıl konumu                                          | ./dataset                |
+| --model    | Eğitimin yapılacağı modelin bağıl konumu                                                | ./traffic_light_model.pt |
+| --resume   | Yarıda kesilen eğitim kaldığı yerden devam etmeli mi (Pozisyonel argüman, tek başına kullanılır)                                     | False                    |
+| --epochs   | Eğitimin devam edeceği tur sayısı                                                       | 100                      |
+| --patience | Performans metriklerinde kaç epoch değişik gözlemlenmediği takdirde eğitim durdurulmalı | 100                      |
+| --batch    | Model tek seferde kaç parça veri (Resim ve etiket çifti) almalı                         | 16                       |
+| --lr       | Modelin başlangıçtaki `learning rate` değeri kaç olmalı                                 | 0.01                     |
+| --gpu      | GPU hızlandırma kullanılmalı mı (Pozisyonel argüman, tek başına kullanılır)             | False                    |
+
+* `--model` argümanından sonra `latest` kelimesi kullanıldığında model, yeni eğitim sonucu oluşturulan `runs` dizinine bakarak en son `train` dizinine bakar ve oradaki `last.pt` modelini kullanır
+
+Örnek komut 1:
+```
+python.exe ./train.py --yaml ./dataset/data.yaml --epochs 10 --gpu
+```
+
+Bu komut:
+- `./dataset/data.yaml` konumundaki .yaml dosyasını kullanır.
+- `10` epoch boyunca eğitim yapar.
+- Ekran kartı desteği kullanır. Program CUDA driverı arar ve bulamazsa kullanıcıyı bilgilendirip CPU kullanarak devam eder.
+- Geri kalan argümanlar varsayılan değerleriyle kullanılır.
+
+Örnek komut 2:
+```
+python.exe ./train.py --model latest --resume --epoch 5 --lr 0.1
+```
+Bu komut:
+- Yeni model eğitilmişse en yeni modeli kullanır, eğitilmemişse varsayılan modeli kullanır.
+- Kaldığı yerden devam eder.
+- 5 epoch boyunca eğitim yapar.
+- Başlangıçta learning rate değeri olarak `0.1` değerini kullanır.
+- Geri kalan argümanlar varsayılan değerleriyle kullanılır.
+
+Tanıma eğitimi sonuçları `./runs/detect` dizini içerisinde `train` dizinlerine kaydedilir.
+
+Örnek dizin yapısı:
+```
+runs/
+├─ detect/
+   ├─ train/
+   ├─ train2/
+   ├─ train3/
+```
+
+### Tanıma
+```
+python.exe ./detect.py [parametreler]
+```
+| Parametre    | Açıklama                                                                                                          | Varsayılan Değer         |
+|--------------|-------------------------------------------------------------------------------------------------------------------|--------------------------|
+| -t, --target | Tanıma yapılacak olan hedef dizin veya dosyanın bağıl konumu (Zorunlu parametre)                                  | -                        |
+|-m, --model   | Tanıma yapacak olan modelin bağıl konumu. Varsayılan olarak halihazırda eğitilmiş olan modelin konumu kullanılır. | ./traffic_light_model.pt |
+
+* `--model` argümanından sonra `latest` kelimesi kullanıldığında model, yeni eğitim sonucu oluşturulan `runs` dizinine bakarak en son `train` dizinine bakar ve oradaki `last.pt` modelini kullanır
+
+Örnek komut 1:
+```
+python.exe ./detect.py --target ./test_source
+```
+Bu komut:
+- `./test_source` dizinindeki dosyalar üzerinde tanıma yapar
+- Model olarak varsayılan modeli (`traffic_light_model.pt`) kullanır
+
+Örnek komut 2:
+```
+python.exe ./detect.py --model latest --target ./test_source/test.jpg
+```
+Bu komut:
+- `./test_source/test.jpg` konumundaki .jpg dosyası üzerinde tanıma yapar
+- Yeni model eğitilmişse en yeni modeli kullanır, eğitilmemişse varsayılan modeli kullanır.
+
+Tanıma sonucu elde edilen sonuçların hepsi `detections` isimli bir dizinin altında her bir tanıma için ayrı klasör oluşturulacak şekilde kaydedilir. Örneğin, `./test.jpg` dosyası üzerinde tanıma yapacak olursak kayıt konumu `./detections/detect1/test.jpg` olur.
+
+Program, `detections` klasörünün içine bakar ve başka bir `detect` klasörü varsa olan klasörlerin isimlerini dikkate alarak yeni bir klasör oluşturur.
+
+Örnek olarak `detections` dizini:
+```
+detections/
+├─ detect1/
+├─ detect2/
+├─ detect3/
+```
+şeklindeyse, program yeni tanıma sonuçlarını `detect4` dizini içine kaydeder.
