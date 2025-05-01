@@ -155,7 +155,7 @@ python.exe ./detect.py [parametreler]
 | Parametre    | Açıklama                                                                                                          | Varsayılan Değer         |
 |--------------|-------------------------------------------------------------------------------------------------------------------|--------------------------|
 | -t, --target | Tanıma yapılacak olan hedef dizin veya dosyanın bağıl konumu (Zorunlu parametre)                                  | -                        |
-|-m, --model   | Tanıma yapacak olan modelin bağıl konumu. Varsayılan olarak halihazırda eğitilmiş olan modelin konumu kullanılır. | ./traffic_light_model.pt |
+|-m, --model   | Tanıma yapacak olan modelin bağıl konumu. Varsayılan olarak halihazırda eğitilmiş olan modelin konumu kullanılır. | traffic_light_model.pt |
 
 * `--model` argümanından sonra `latest` kelimesi kullanıldığında model, yeni eğitim sonucu oluşturulan `runs` dizinine bakarak en son `train` dizinine bakar ve oradaki `last.pt` modelini kullanır
 
