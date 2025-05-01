@@ -99,5 +99,3 @@ Programın tanımada kullanabildiği dosya uzantıları:
     python.exe ./detect.py "Hedef dosya veya dizin adı"
     ```
     komutu çalıştırılmalıdır.
-
-# traffic_light_detection
