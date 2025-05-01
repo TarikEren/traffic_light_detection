@@ -105,7 +105,7 @@ python.exe ./train.py [parametreler]
 |------------|-----------------------------------------------------------------------------------------|--------------------------|
 | --yaml     | YOLO model eğitimi için kullanılacak olan .yaml dosyasının bağıl konumu                 | ./data.yaml              |
 | --dataset  | YOLO formatında olan veri setinin bağıl konumu                                          | ./dataset                |
-| --model    | Eğitimin yapılacağı modelin bağıl konumu                                                | ./traffic_light_model.pt |
+| --model    | Eğitimin yapılacağı modelin bağıl konumu                                                | traffic_light_model.pt |
 | --resume   | Yarıda kesilen eğitim kaldığı yerden devam etmeli mi (Pozisyonel argüman, tek başına kullanılır)                                     | False                    |
 | --epochs   | Eğitimin devam edeceği tur sayısı                                                       | 100                      |
 | --patience | Performans metriklerinde kaç epoch değişik gözlemlenmediği takdirde eğitim durdurulmalı | 100                      |
