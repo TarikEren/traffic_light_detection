@@ -86,3 +86,13 @@ def get_latest_detect_suffix(detect_directories: list) -> str:
         suffixes.append(dir[7:] if dir[7:] != '' else "0")
     suffixes.sort()
     return int(suffixes[len(suffixes) - 1])
+
+def string_to_bool(argparse, string: str):
+    if isinstance(string, bool):
+        return string
+    if string.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif string.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')

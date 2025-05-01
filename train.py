@@ -8,7 +8,7 @@ import argparse
 import ultralytics
 from ultralytics import YOLO
 
-from utils import get_latest_train, get_train_directories
+from utils import get_latest_train, get_train_directories, string_to_bool
 
 # Setting up the argument parser
 parser = argparse.ArgumentParser(prog="Traffic Light Model Trainer",
@@ -39,6 +39,9 @@ def parse_args():
     # Resume training or not
     parser.add_argument("--resume",
                         help="Whether the training should continue from where it left off",
+                        type=string_to_bool,
+                        const=True,
+                        nargs="?",
                         default=False)
 
     # Epoch count
@@ -70,7 +73,14 @@ def parse_args():
     parser.add_argument("--lr",
                         help="Starting learning rate",
                         default=0.01)
-
+    
+    # GPU acceleration
+    parser.add_argument("--gpu",
+                        help="Whether GPU acceleration should be used",
+                        type=string_to_bool,
+                        const=True,
+                        nargs="?",
+                        default=False)
 
     # Parse the passed arguments
     args = parser.parse_args()
@@ -85,17 +95,34 @@ def main(args):
     if not os.path.exists(args.dataset):
         raise FileNotFoundError(f"Cannot find dataset {args.dataset}")
 
+    # If the latest argument was provided
     if args.model == "latest":
+        # Check if runs exists
         if not os.path.exists("runs"):
+            # If not, notify the user that it doesn't and fall back to the default model
             print("WARN: 'runs' directory not found, using default model")
+
+            # If the default model wasn't found raise error and kill program
             if not os.path.exists("traffic_light_model.pt"):
                 raise FileNotFoundError("Failed to find the model 'traffic_light_model'. Please reinstall the program")
+            
             MODEL = "traffic_light_model.pt"
         else:
+            # Get the latest model
             train_dirs = get_train_directories()
             MODEL = os.path.join("runs", "detect", get_latest_train(train_directories=train_dirs), "weights", "last.pt")
     else:
         MODEL = args.model
+
+    if args.gpu:
+        import torch
+        if not torch.cuda.is_available():
+            print("WARN: Could not find CUDA, using CPU")
+            GPU = False
+        else:
+            GPU = True
+    else:
+        GPU = args.gpu
 
     # Setting constants based on the arguments
     YAML_FILE = args.yaml
@@ -123,6 +150,7 @@ def main(args):
     worker count: {WORKERS}
     batch size: {BATCH_SIZE}
     starting learning rate: {LEARNING_RATE}
+    gpu usage: {GPU}
 ########## END TRAINING INFO ##########""")
 
     # Get the model to train using the constant
@@ -136,7 +164,8 @@ def main(args):
                         batch=BATCH_SIZE,
                         patience=PATIENCE,
                         resume=RESUME,
-                        lr0=LEARNING_RATE)
+                        lr0=LEARNING_RATE,
+                        device="cuda" if GPU else "cpu")
     
 if __name__ == "__main__":
     args = parse_args()
