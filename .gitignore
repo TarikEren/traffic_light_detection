@@ -2,6 +2,5 @@
 /.vscode
 /dataset
 /test_source
-*.mp4
 /detections
 /runs
