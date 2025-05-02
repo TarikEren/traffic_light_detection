@@ -50,13 +50,8 @@ def main(args):
     else:
         MODEL = args.model
 
-    if os.path.isdir(args.target):
-        # Get all target files from the directory
-        target = []
-        for file in os.listdir(args.target):
-            target.append(os.path.join("./", args.target, file))
-    else:
-        target = args.target
+    if not os.path.exists(args.target):
+        raise FileNotFoundError("No target directory found")
 
     print(f"""{"#"*30} DETECTION INFO {"#"*30}
     target directory: {args.target}
@@ -82,7 +77,11 @@ def main(args):
         # If not, make it
         os.mkdir(os.path.join("detections", new_detect_name))
 
-    if os.path.isdir(target):
+    if os.path.isdir(args.target):
+        # Get all target files from the directory
+        target = []
+        for file in os.listdir(args.target):
+            target.append(os.path.join("./", args.target, file))
         for elem in target:
             file_name, file_ext = os.path.splitext(elem)
             if file_ext in VIDEO_EXT:
@@ -97,6 +96,7 @@ def main(args):
             else:
                 print(f"WARN: Invalid file extension {file_ext} in file {file_name}; skipping")
     else:
+        target = args.target
         file_name, file_ext = os.path.splitext(target)
         if file_ext in VIDEO_EXT:
             video_inference(model=model,
