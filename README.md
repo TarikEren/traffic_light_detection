@@ -45,28 +45,15 @@ Program kendisine verilen resim veya videoda tanıdığı trafik ışıklarını
 
 Programın tanımada kullanabildiği dosya uzantıları:
 - .bmp
-- .dng
 - .jpeg
 - .jpg
-- .mpo
 - .png
 - .tif
 - .tiff
-- .webp
-- .pfm
-- .HEIC
-- .asf
 - .avi
-- .gif
-- .m4v
-- .mkv
-- .mov
 - .mp4
 - .mpeg
 - .mpg
-- .ts
-- .wmv
-- .webm
 
 ## Gereksinimler
 - Git
