@@ -25,7 +25,7 @@ Bu veri setinde `2397` tane `Red`, `Yellow` ve `Green` olarak etiketlenmiş resi
 ### Eğitim Süreci
 | Parametre  | Açıklama                                                                             | Değer          |
 |------------|--------------------------------------------------------------------------------------|----------------|
-| Epoch      | Eğitimin süreceği tur sayısı                                                         | 200            |
+| Epoch      | Eğitimin süreceği tur sayısı                                                         | 300            |
 | Patience   | Doğrulama metriklerinde herhangi bir değişiklik görülmeden harcanacak bekleme süresi | 100            |
 | Batch      | Modelin tek seferde kaç parça veri birden alacağı                                    | 16             |
 | Image Size | Resimlerin modele gönderilirkenki boyutu                                             | 640            |
